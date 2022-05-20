@@ -1,20 +1,34 @@
 #!/bin/bash
 
-for i in {1..4}; do echo -e "#!/bin/bash \necho 'privet$i'"  > /root/scripts/file$i.sh;done
+#mkdir /home/serv1/scripts
 
-chmod +x file{1..4}.sh
+for i in {1..4}; do echo -e "#!/bin/bash \necho 'privet$i'" > /home/serv1/scripts/file$i.sh;done
 
-if ! [-d /root/temp1/]; then
-mkdir /root/temp1/
-fi
+chmod +x /home/serv1/scripts/file{1..4}.sh
+rsync -avz /home/serv1/scripts/ root@51.250.18.185:/home/serv2/scripts/
 
-rsync -avz /root/scripts/ root@51.250.17.118:/root/scripts/
-#echo "rsync -avz --delete /root/temp1/ root@51.250.11.132:/root/scripts/" | at now +1 week
+### 1 вариант - работает
+
+#if [ ! -d /home/serv1/temp1/ ]; then
+#mkdir /home/serv1/temp1/
+#fi
+
+#echo "rsync -avz --delete /home/serv1/temp1/ root@84.201.160.37:/home/serv2/scripts/" | at now +1 week
+#echo "rsync -avz --delete /home/serv1/temp1/ root@51.250.18.185:/home/serv2/scripts/" | at now +3 minutes
+
+###------end 1 variant
 
 
+###2 вариант - работает
+
+echo "ssh root@84.201.160.37 find /home/serv2/scripts/ -type f -mtime +7 -delete" | at now +7 days   # удалять 7 дневные 
+
+#echo "ssh root@51.250.18.185 find /home/serv2/scripts/ -type f -cmin +2 -delete" | at now +3 minutes     # для проверки удалить 5 минутные создания
+
+### ------end 2 variant
 
 
 # hours, days, weeks. minutes
-
+# -exec rm{}
 
 
